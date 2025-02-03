@@ -1620,6 +1620,8 @@ def IRENASTAT(raw=False, update=False, config=None):
     }
     df.rename(columns=RENAME_COLUMNS, inplace=True)
 
+    df.drop(columns="Data Type", inplace=True, errors="ignore")
+
     # Rename country entries that confuse country_converter
     country_renames = {
         "Congo (the)": "Congo",
