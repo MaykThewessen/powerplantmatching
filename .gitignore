@@ -108,3 +108,9 @@ uv.lock
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+# claude
+.claude/
+
+# local analysis files
+NL_plants_comparison.xlsx
+powerplants_custom.csv
