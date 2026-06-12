@@ -75,6 +75,8 @@ def clean_name(df, config=None):
     if config is None:
         config = get_config()
 
+    # fillna before astype: with pandas >= 3.0 string dtype, astype(str)
+    # preserves NA, and unidecode then chokes on the float NaN it receives.
     name = df.Name.fillna("").astype(str).copy().apply(unidecode.unidecode)
 
     roman_to_arabic = {

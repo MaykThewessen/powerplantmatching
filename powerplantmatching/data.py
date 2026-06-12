@@ -2495,6 +2495,7 @@ def MASTR(
                         usecols=usecols,
                         dtype=dtypes,
                         chunksize=100_000,
+                        low_memory=False,
                     )
                     df = pd.concat(
                         [c[c["Nettonennleistung"] >= THRESHOLD_KW] for c in chunks]
@@ -2530,6 +2531,9 @@ def MASTR(
 
     PLZ_map = PLZ_to_LatLon_map()
     df.Postleitzahl = (
+        # fillna after astype: pandas >= 3.0 astype(str) preserves NA, which
+        # the final astype(int) cannot represent. On pandas < 3 NaN becomes
+        # the string "nan" and the regex maps it to "000" - same outcome.
         df.Postleitzahl.astype(str)
         .fillna("0")
         .str.replace(r"[^0-9]", "0", regex=True)
