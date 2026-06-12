@@ -1,30 +1,24 @@
 # OSM changeset draft — Amer power plant
 
-**OSM object:** relation `power=plant` at 51.7098, 4.8437 (Amercentrale, Geertruidenberg, NL)
+**OSM object:** way/6318872 (Amercentrale, Geertruidenberg, NL) — verified live 2026-06-12 via Overpass.
 
-**Tag changes to apply:**
-- `plant:source` → `biomass` (was likely `coal` or mixed)
-- `plant:method` → `combustion`
-- `plant:output:electricity` → `500 MW`
-- `generator:type` (on the active unit) → `steam_turbine`
-- (consider) `start_date:plant:source=biomass` → `2019` (conversion year)
+**Current live tags (already correct, do NOT re-edit):**
+- `plant:source=biomass` ✓ (community fixed since this draft was written)
+- `plant:method=combustion` ✓
+- `operator=RWE` ✓
 
----
+**Remaining tag change to apply:**
+- `plant:output:electricity` → `631 MW` (currently **1245 MW** — stale sum of Amer-8 + Amer-9; Amer-8 closed 2015 and was demolished. Only Amer-9 operates: 631 MWe.)
+- Leave `plant:output:hot_water=600 MW` untouched (unverified; RWE cites ~350 MWth district heat but no authoritative public figure — do not change without source).
 
 ## Changeset comment
 
-<!-- TODO: write 1 line, human-readable, public forever -->
-
+> Amercentrale: correct electric capacity 1245→631 MW. Amer-8 (645 MW) closed 2015; only Amer-9 (631 MW, biomass) operates. Source: ENTSO-E Transparency installed capacity per unit (EIC 49W000000000070Z) + RWE operator page.
 
 ## Source tags
 
-<!-- TODO: cite verifiable source(s) for each numeric/categorical change -->
-- `source:plant:source` = 
-- `source:plant:output:electricity` = 
-- `source:start_date` = 
+- `source:plant:output:electricity` = `ENTSO-E Transparency Platform, production unit 49W000000000070Z (631 MW); https://www.rwe.com/en/the-group/countries-and-locations/amer-power-plant/`
 
----
+## Notes for reviewer
 
-## Notes for reviewer (optional, goes in changeset comment if space)
-
-<!-- Any context a DWG reviewer might want: prior state, why the change is uncontroversial -->
+Prior 1245 MW = historical two-unit site total. ENTSO-E registered unit capacity and RWE both state 631 MW for the single remaining unit (Amer-9). plant:source=biomass already correct in OSM.

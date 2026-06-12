@@ -1,47 +1,29 @@
-# OSM changeset draft — Hemweg coal unit retirement
+# OSM changeset draft — Hemweg — RESOLVED, no lifecycle edit needed
 
-**Context:** Hemwegcentrale, Amsterdam. The site historically contained multiple units:
-- Hemweg 7 (gas, CCGT) — still operating
-- Hemweg 8 (coal, ~650 MW) — closed Dec 2019 (Dutch coal phase-out), demolished 2024
+**Verified live 2026-06-12 via Overpass:** way/292125850 (Centrale Hemweg, Amsterdam).
 
-**OSM objects:** search "Hemwegcentrale" in OSM. Likely either:
-- One `power=plant` relation for the whole site (must not delete — Hemweg 7 still operates)
-- Separate objects per unit (preferred — edit only the coal unit)
+The coal-unit retirement this draft planned is **already done in OSM**: no coal
+object remains in the Westpoort bbox. The surviving plant object is:
 
----
+- `power=plant`, `plant:source=gas`, `plant:method=combustion`
+- `plant:output:electricity=435 MW`, `operator=Vattenfall`, `start_date=1953`
 
-## Decision point — lifecycle prefix
+The original decision point (disused vs demolished prefix for Hemweg 8) is moot —
+the community removed/retagged the coal unit after the 2024 demolition.
 
-OSM has three ways to represent a retired asset. You must pick one:
+## Optional remaining micro-fix
 
-<!--
-  (a) disused:power=plant   → structure still standing but not operating
-  (b) abandoned:power=plant → structure standing, operator gone, no maintenance
-  (c) demolished:power=plant → physically torn down, geometry represents former footprint
-  (d) delete the object     → only if geometry is now used for something else
+- `plant:output:electricity` 435 → `440 MW` (Hemweg 9 CCGT registered capacity,
+  ENTSO-E EIC 49W000000000045Y). 5 MW delta — borderline noise; only worth it
+  bundled into a changeset with the Amer fix.
+- `start_date=1953` refers to the site, not the current CCGT (2012). Could move to
+  `start_date=2012` on the plant with site history in `note`, but this is
+  opinionated — skip unless a reviewer asks.
 
-  Your commit says "torn down 2024". That points to (c) demolished.
-  BUT: if the cooling tower or smokestack still stands, (a) disused is more accurate.
-  Check recent aerial imagery in iD before deciding.
--->
+## Changeset comment (if bundling the 440 MW fix)
 
-My choice: <!-- TODO -->
-
-## Tag changes
-
-- Remove: `power=plant` (only if demolished)
-- Add: `demolished:power=plant=yes` (or `disused:power=plant=yes`)
-- Add: `end_date` = `2019` (last generation) or `2024` (physical demolition) — pick the semantically meaningful date for *this* tag
-- Keep: name, operator (as historical record)
-
-## Changeset comment
-
-<!-- TODO -->
+> Centrale Hemweg: electric capacity 435→440 MW per ENTSO-E Transparency registered unit capacity (EIC 49W000000000045Y).
 
 ## Source tag
 
-- `source:end_date` = <!-- e.g. Vattenfall press release, AT5 news article on demolition, aerial imagery date -->
-
-## IMPORTANT
-
-Do NOT edit anything on Hemweg 7 (the gas unit). Verify in iD that you're editing only the coal unit geometry — a wrong click here will retire an active plant in the database.
+- `source:plant:output:electricity` = `ENTSO-E Transparency Platform, production unit 49W000000000045Y`

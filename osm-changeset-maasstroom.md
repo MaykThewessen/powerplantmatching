@@ -1,26 +1,27 @@
 # OSM changeset draft — Maasstroom (Rijnmond 2)
 
-**OSM object:** relation `power=plant` near 51.8901, 4.352 (Maasstroom Energie, adjacent to Rijnmond 1)
+**OSM object:** way/164715508 (Maasstroom Energie, Rotterdam Pernis) — verified live 2026-06-12 via Overpass.
+
+**Current live tags:** `plant:output:electricity=420 MW`, `plant:source=gas`,
+`plant:method=combustion`, plus a stray `generator:method=thermal`.
 
 **Tag changes to apply:**
-- `plant:output:electricity` → `426 MW` (was 428 MW)
+- `plant:output:electricity` → `426 MW` (was 420 in OSM; 426 = ENTSO-E registered
+  unit capacity, EIC 49W0000000001225)
+- Remove stray `generator:method=thermal` — `generator:*` keys belong on
+  `power=generator` objects, not on the `power=plant` site (plant:method=combustion
+  already present and correct)
 
-Minor correction — 2 MW delta is within common rounding error, so the changeset comment must be extra clear about the source, otherwise it may be reverted as "noise."
+## Decision (resolved)
+
+Option (b) from the original draft: bundle with the Amer capacity fix in one
+NL-thermal-capacities changeset, all values sourced from ENTSO-E TP. A 6 MW solo
+edit invites a "noise" revert; a sourced multi-plant changeset does not.
 
 ## Changeset comment
 
-<!-- TODO: 1 line, explicit source -->
-
+> Maasstroom Energie: electric capacity 420→426 MW per ENTSO-E Transparency registered unit capacity (EIC 49W0000000001225); drop stray generator:method tag from plant object.
 
 ## Source tag
 
-- `source:plant:output:electricity` =
-
-## Decision point
-
-<!--
-2 MW is within typical reporting variance. Options:
-  (a) Skip this edit entirely — not worth a changeset
-  (b) Bundle it with Rijnmond 1 in a single changeset covering "Maasvlakte gas cluster"
-  (c) Solo changeset with very explicit source
--->
+- `source:plant:output:electricity` = `ENTSO-E Transparency Platform, production unit 49W0000000001225`
