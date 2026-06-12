@@ -1,4 +1,4 @@
-# OSM changeset draft — Maasstroom (Rijnmond 2)
+# OSM changeset draft — Rijnmond 2 (Maasstroom)
 
 **OSM object:** way/164715508 (Maasstroom Energie, Rotterdam Pernis) — verified live 2026-06-12 via Overpass.
 
