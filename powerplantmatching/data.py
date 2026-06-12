@@ -6,6 +6,7 @@
 Collection of power plant data bases and statistical data
 """
 
+import contextlib
 import json
 import logging
 import os
@@ -17,6 +18,7 @@ import pandas as pd
 import pycountry
 import requests
 from deprecation import deprecated
+from packaging.version import parse as parse_version
 
 from .cleaning import (
     clean_name,
@@ -93,7 +95,14 @@ def BEYONDCOAL(raw=False, update=False, config=None):
         "heat": "CHP",
     }
 
-    with pd.option_context("future.no_silent_downcasting", True):
+    # pandas >= 3.0 removed the option and made no-silent-downcasting the
+    # default behaviour; requesting it there raises.
+    no_downcast_ctx = (
+        pd.option_context("future.no_silent_downcasting", True)
+        if parse_version(pd.__version__).major < 3
+        else contextlib.nullcontext()
+    )
+    with no_downcast_ctx:
         phaseout_col = "Covered by country phase-out? [if yes: country phase-out year]"
         date_out = (
             df["(Announced) Retirement year"]
@@ -2398,7 +2407,10 @@ def MASTR(
                     )
                     usecols = available_columns.intersection(target_columns)
                     df = (
-                        pd.read_csv(file.open(name), usecols=usecols)
+                        # low_memory=False: the chunked parser's DtypeWarning
+                        # path crashes with usecols on pandas >= 3.0
+                        # (IndexError in the warning-column lookup).
+                        pd.read_csv(file.open(name), usecols=usecols, low_memory=False)
                         .assign(Filesuffix=fueltype)
                         .query("Nettonennleistung >= @THRESHOLD_KW")
                     )
@@ -2434,7 +2446,13 @@ def MASTR(
 
     PLZ_map = PLZ_to_LatLon_map()
     df.Postleitzahl = (
-        df.Postleitzahl.astype(str).str.replace(r"[^0-9]", "0", regex=True).astype(int)
+        # fillna after astype: pandas >= 3.0 astype(str) preserves NA, which
+        # the final astype(int) cannot represent. On pandas < 3 NaN becomes
+        # the string "nan" and the regex maps it to "000" - same outcome.
+        df.Postleitzahl.astype(str)
+        .fillna("0")
+        .str.replace(r"[^0-9]", "0", regex=True)
+        .astype(int)
     )
     df["PLZ_lat"] = df.Postleitzahl.map(PLZ_map.lat)
     df["PLZ_lon"] = df.Postleitzahl.map(PLZ_map.lon)
