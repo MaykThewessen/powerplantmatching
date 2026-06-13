@@ -102,3 +102,7 @@ uv.lock
 
 # jupyter
 *.ipynb
+
+# local NL plant analysis artifacts (auto-commit hook guard)
+powerplants_custom.csv
+NL_plants_comparison.xlsx
