@@ -6,6 +6,7 @@
 Functions for vertically cleaning a dataset.
 """
 
+import contextlib
 import logging
 
 import networkx as nx
@@ -13,6 +14,7 @@ import numpy as np
 import pandas as pd
 import unidecode
 from deprecation import deprecated
+from packaging.version import parse as parse_version
 
 from .core import get_config, get_obj_if_Acc
 from .duke import duke
@@ -515,9 +517,18 @@ def aggregate_units(
     df = cliques(df, duplicates)
     df = df.groupby("grouped").agg(props_for_groups)
 
-    # Downcasting in replace is deprecated
-    with pd.option_context("future.no_silent_downcasting", True):
-        df[str_cols] = df[str_cols].replace("", pd.NA).infer_objects(copy=False)
+    # Downcasting in replace is deprecated on pandas 2 (silenced by the
+    # option) and is the default on pandas 3, where the option was removed
+    # and requesting it raises. Guard it behind a version check.
+    no_downcast_ctx = (
+        pd.option_context("future.no_silent_downcasting", True)
+        if parse_version(pd.__version__).major < 3
+        else contextlib.nullcontext()
+    )
+    with no_downcast_ctx:
+        # copy keyword dropped: deprecated on pandas 3 (Copy-on-Write makes it
+        # a no-op); pandas 2 defaults to copy=True, harmless here.
+        df[str_cols] = df[str_cols].replace("", pd.NA).infer_objects()
 
     df = (
         df.assign(
