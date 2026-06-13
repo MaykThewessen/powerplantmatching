@@ -106,3 +106,6 @@ uv.lock
 # local NL plant analysis artifacts (auto-commit hook guard)
 powerplants_custom.csv
 NL_plants_comparison.xlsx
+
+# macOS Finder metadata
+.DS_Store
