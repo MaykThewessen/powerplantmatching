@@ -109,3 +109,6 @@ NL_plants_comparison.xlsx
 
 # macOS Finder metadata
 .DS_Store
+# pixi environments
+.pixi/*
+!.pixi/config.toml
