@@ -226,14 +226,14 @@ MASTR:
   reliability_score: 7
   status: ["In Betrieb", "In Planung", "Endgültig stillgelegt", "Vorübergehend stillgelegt"]
   capacity_threshold: 0.1  # all values below will be filtered out, given in MW
-  fn: bnetza_open_mastr_2026-06-14.zip
-  # fn = current local build from the open-mastr bulk export (all technologies,
-  # uncapped, 2026-06-14) via scripts/build_mastr_zip_from_open_mastr.py, kept
-  # fresh independent of Zenodo's infrequent re-releases. Loaded for update=False
-  # (the production default): 160k units / ~341 GW.
-  # url = latest *published* Zenodo dump (2025-02-09), used only as a fallback
-  # when fn is absent. NOTE: MASTR(update=True) overwrites fn with this older
-  # public content -- use update=False to keep the renewed local build.
+  # fn = glob pattern: auto-selects the most recent local bnetza_open_mastr_<date>.zip
+  # (ISO dates sort chronologically). Build a current dump from the open-mastr bulk
+  # export (all technologies, uncapped) via scripts/build_mastr_zip_from_open_mastr.py,
+  # kept fresh independent of Zenodo's infrequent re-releases.
+  # url = latest *published* Zenodo dump (2025-02-09), downloaded to its own basename
+  # only when no local match exists (or update=True), so it never clobbers a newer
+  # local build.
+  fn: bnetza_open_mastr_*.zip
   url: https://zenodo.org/records/14783581/files/bnetza_open_mastr_2025-02-09.zip
 EESI:
   net_capacity: true

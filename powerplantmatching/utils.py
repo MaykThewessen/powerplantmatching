@@ -10,7 +10,9 @@ import multiprocessing
 import os
 import re
 from ast import literal_eval as liteval
+from glob import glob
 from importlib.metadata import version
+from urllib.parse import urlparse
 
 import country_converter as coco
 import numpy as np
@@ -76,7 +78,19 @@ def get_raw_file(name, update=False, config=None, skip_retrieve=False):
     if config is None:
         config = get_config()
     df_config = config[name]
-    path = _data_in(df_config["fn"])
+    fn = df_config["fn"]
+
+    # A glob pattern in `fn` selects the most recent matching local file
+    # (e.g. a locally built, dated dump). ISO-dated filenames sort
+    # chronologically, so the last match is the newest. Falls back to
+    # downloading the URL's basename when nothing local matches.
+    if any(c in fn for c in "*?["):
+        matches = sorted(glob(_data_in(fn)))
+        if matches and not update:
+            return matches[-1]
+        path = _data_in(os.path.basename(urlparse(df_config["url"]).path))
+    else:
+        path = _data_in(fn)
 
     if (not os.path.exists(path) or update) and not skip_retrieve:
         url = df_config["url"]
