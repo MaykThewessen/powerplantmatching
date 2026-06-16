@@ -114,3 +114,5 @@ uv.lock
 # local analysis files
 NL_plants_comparison.xlsx
 powerplants_custom.csv
+# stet eval runtime output
+.stet/
