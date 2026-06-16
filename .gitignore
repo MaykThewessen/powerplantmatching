@@ -110,3 +110,5 @@ uv.lock
 !.pixi/config.toml
 # claude
 .claude/
+# stet eval runtime output
+.stet/
