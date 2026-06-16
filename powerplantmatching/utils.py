@@ -86,7 +86,12 @@ def get_raw_file(name, update=False, config=None, skip_retrieve=False):
     # downloading the URL's basename when nothing local matches.
     if any(c in fn for c in "*?["):
         matches = sorted(glob(_data_in(fn)))
-        if matches and not update:
+        if matches:
+            # The newest local dated build is authoritative. The URL is a
+            # frozen seed (e.g. the last Zenodo dump) that can never be newer
+            # than a local build, so honour the local match even when
+            # update=True; otherwise a forced refresh silently regresses to
+            # stale data.
             return matches[-1]
         path = _data_in(os.path.basename(urlparse(df_config["url"]).path))
     else:
