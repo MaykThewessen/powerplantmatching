@@ -34,6 +34,8 @@ matching_sources:
   - OSM: Capacity >= 1
   - EESI
   - GHR
+  # OSM (open-energy-transition/osm-powerplants); exclude German wind (MASTR-owned)
+  - OSM: Capacity >= 1 and not (Country == 'Germany' and Fueltype == 'Wind')
 
 # # fully_included_sources, these sources are included even without match to the final dataset
 fully_included_sources:
@@ -49,6 +51,8 @@ fully_included_sources:
   - BEYONDCOAL
   # include this selection of countries as they have poorer coverage in all other datasets
   - JRC: Country in ['Italy', 'Croatia', 'Serbia', 'Slovakia']
+  # solar and wind in Germany is covered by MASTR
+  - OSM: not (Country == 'Germany' and Fueltype in ['Solar', 'Wind'])
 
 # these sources skip unit aggregation for fully_included_sources not covered in matching_sources
 aggregate_only_matching_sources:
