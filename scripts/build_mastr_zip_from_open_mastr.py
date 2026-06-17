@@ -43,21 +43,44 @@ TABLE_TO_CSV = {
 # with what is present, so a missing column in one table is harmless.
 EXTENDED_COLUMNS = [
     # target_columns
-    "GeplantesInbetriebnahmedatum", "ThermischeNutzleistung", "KwkMastrNummer",
-    "Batterietechnologie", "DatumBeginnVoruebergehendeStilllegung",
-    "DatumWiederaufnahmeBetrieb", "Postleitzahl", "Ort", "Gemeinde", "Landkreis", "Lage",
+    "GeplantesInbetriebnahmedatum",
+    "ThermischeNutzleistung",
+    "KwkMastrNummer",
+    "Batterietechnologie",
+    "DatumBeginnVoruebergehendeStilllegung",
+    "DatumWiederaufnahmeBetrieb",
+    "Postleitzahl",
+    "Ort",
+    "Gemeinde",
+    "Landkreis",
+    "Lage",
     # PARSE_COLUMNS (Filesuffix is added by ppm, not sourced)
-    "ArtDerWasserkraftanlage", "Biomasseart", "Energietraeger", "Hauptbrennstoff",
-    "NameStromerzeugungseinheit", "NameKraftwerksblock", "NameWindpark", "Technologie",
+    "ArtDerWasserkraftanlage",
+    "Biomasseart",
+    "Energietraeger",
+    "Hauptbrennstoff",
+    "NameStromerzeugungseinheit",
+    "NameKraftwerksblock",
+    "NameWindpark",
+    "Technologie",
     # RENAME_COLUMNS keys
-    "EinheitMastrNummer", "NameKraftwerk", "Land", "Nettonennleistung",
-    "Inbetriebnahmedatum", "DatumEndgueltigeStilllegung", "EinheitBetriebsstatus",
-    "Laengengrad", "Breitengrad", "WEIC",
+    "EinheitMastrNummer",
+    "NameKraftwerk",
+    "Land",
+    "Nettonennleistung",
+    "Inbetriebnahmedatum",
+    "DatumEndgueltigeStilllegung",
+    "EinheitBetriebsstatus",
+    "Laengengrad",
+    "Breitengrad",
+    "WEIC",
 ]
 STORAGE_UNITS_COLUMNS = ["NutzbareSpeicherkapazitaet", "VerknuepfteEinheit"]
 
 DEFAULT_DB = Path.home() / ".open-MaStR" / "data" / "sqlite" / "open-mastr.db"
-DEFAULT_OUT_DIR = Path.home() / ".local" / "share" / "powerplantmatching" / "data" / "in"
+DEFAULT_OUT_DIR = (
+    Path.home() / ".local" / "share" / "powerplantmatching" / "data" / "in"
+)
 
 
 def _existing_columns(con: sqlite3.Connection, table: str) -> list[str]:
@@ -69,15 +92,20 @@ def build(db_path: Path, out_path: Path, date_tag: str) -> None:
     folder = f"bnetza_open_mastr_{date_tag}"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory() as tmp, zipfile.ZipFile(
-        out_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6
-    ) as zf:
+    with (
+        tempfile.TemporaryDirectory() as tmp,
+        zipfile.ZipFile(
+            out_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6
+        ) as zf,
+    ):
         for table, csv_name in TABLE_TO_CSV.items():
             avail = _existing_columns(con, table)
             if not avail:
                 print(f"  skip {table}: table missing/empty")
                 continue
-            wanted = STORAGE_UNITS_COLUMNS if table == "storage_units" else EXTENDED_COLUMNS
+            wanted = (
+                STORAGE_UNITS_COLUMNS if table == "storage_units" else EXTENDED_COLUMNS
+            )
             cols = [c for c in wanted if c in avail]
             if not cols:
                 print(f"  skip {table}: none of the wanted columns present")
@@ -94,7 +122,9 @@ def build(db_path: Path, out_path: Path, date_tag: str) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", type=Path, default=DEFAULT_DB)
-    ap.add_argument("--date", default=None, help="date tag for folder/filename, e.g. 2026-06-14")
+    ap.add_argument(
+        "--date", default=None, help="date tag for folder/filename, e.g. 2026-06-14"
+    )
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
 
