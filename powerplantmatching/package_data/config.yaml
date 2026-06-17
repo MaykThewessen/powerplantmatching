@@ -226,7 +226,10 @@ MASTR:
   reliability_score: 7
   status: ["In Betrieb", "In Planung", "Endgültig stillgelegt", "Vorübergehend stillgelegt"]
   capacity_threshold: 0.1  # all values below will be filtered out, given in MW
-  fn: bnetza_open_mastr_2025-02-09.zip
+  # Glob selects the newest local dump (see get_raw_file). Build a current one
+  # from the open-mastr bulk export with scripts/build_mastr_zip_from_open_mastr.py;
+  # otherwise the frozen Zenodo dump below (last published 2025-02-09) is fetched.
+  fn: bnetza_open_mastr_*.zip
   url: https://zenodo.org/records/14783581/files/bnetza_open_mastr_2025-02-09.zip
 EESI:
   net_capacity: true
