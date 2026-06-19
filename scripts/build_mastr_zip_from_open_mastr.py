@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to powerplantmatching <https://github.com/pypsa/powerplantmatching>
+#
+# SPDX-License-Identifier: MIT
+
 """
 Build a powerplantmatching-compatible MaStR zip from an open-mastr SQLite DB.
 
