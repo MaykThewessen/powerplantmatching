@@ -24,10 +24,6 @@ def add_geoposition_for_duke(df):
     """
     if not df.loc[:, ["lat", "lon"]].isnull().all().all():
         return df.assign(
-            # map(str, ...): pandas >= 3.0 astype(str) preserves NA as a float
-            # NaN, so ",".join would fail on the float; stringify each item so
-            # NaN becomes "nan" (as it did implicitly on pandas < 3), keeping
-            # the "nan,nan" -> NaN cleanup below valid.
             Geoposition=df[["lat", "lon"]]
             .apply(lambda s: ",".join(map(str, s)), axis=1)
             .replace("nan,nan", np.nan)

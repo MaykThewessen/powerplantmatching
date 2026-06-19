@@ -34,11 +34,6 @@ def best_matches(links):
     if links.empty:
         return pd.DataFrame(columns=labels)
     else:
-        # Per second-dataset key, keep the row with the highest score. The
-        # previous groupby(...).apply form broke on pandas 3 (as_index=False
-        # re-inserts the grouping column, which is absent from the per-group
-        # Series the lambda returns -> KeyError). idxmax avoids apply
-        # entirely, is behaviour-identical, and faster.
         scores = links["scores"].astype(float)
         best_idx = scores.groupby(links.iloc[:, 1], sort=False).idxmax()
         return links.loc[best_idx, labels].reset_index(drop=True)

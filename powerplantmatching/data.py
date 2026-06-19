@@ -95,8 +95,6 @@ def BEYONDCOAL(raw=False, update=False, config=None):
         "heat": "CHP",
     }
 
-    # pandas >= 3.0 removed the option and made no-silent-downcasting the
-    # default behaviour; requesting it there raises.
     no_downcast_ctx = (
         pd.option_context("future.no_silent_downcasting", True)
         if parse_version(pd.__version__).major < 3
@@ -2407,9 +2405,6 @@ def MASTR(
                     )
                     usecols = available_columns.intersection(target_columns)
                     df = (
-                        # low_memory=False: the chunked parser's DtypeWarning
-                        # path crashes with usecols on pandas >= 3.0
-                        # (IndexError in the warning-column lookup).
                         pd.read_csv(file.open(name), usecols=usecols, low_memory=False)
                         .assign(Filesuffix=fueltype)
                         .query("Nettonennleistung >= @THRESHOLD_KW")
@@ -2446,9 +2441,6 @@ def MASTR(
 
     PLZ_map = PLZ_to_LatLon_map()
     df.Postleitzahl = (
-        # fillna after astype: pandas >= 3.0 astype(str) preserves NA, which
-        # the final astype(int) cannot represent. On pandas < 3 NaN becomes
-        # the string "nan" and the regex maps it to "000" - same outcome.
         df.Postleitzahl.astype(str)
         .fillna("0")
         .str.replace(r"[^0-9]", "0", regex=True)
