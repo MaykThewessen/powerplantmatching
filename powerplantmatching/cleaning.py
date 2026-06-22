@@ -14,9 +14,8 @@ import numpy as np
 import pandas as pd
 import unidecode
 from deprecation import deprecated
-from packaging.version import parse as parse_version
 
-from .core import get_config, get_obj_if_Acc
+from .core import PANDAS_V3, get_config, get_obj_if_Acc
 from .duke import duke
 from .utils import get_name, set_column_name
 
@@ -516,9 +515,9 @@ def aggregate_units(
     df = df.groupby("grouped").agg(props_for_groups)
 
     no_downcast_ctx = (
-        pd.option_context("future.no_silent_downcasting", True)
-        if parse_version(pd.__version__).major < 3
-        else contextlib.nullcontext()
+        contextlib.nullcontext()
+        if PANDAS_V3
+        else pd.option_context("future.no_silent_downcasting", True)
     )
     with no_downcast_ctx:
         df[str_cols] = df[str_cols].replace("", pd.NA).infer_objects()

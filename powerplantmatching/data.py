@@ -18,7 +18,6 @@ import pandas as pd
 import pycountry
 import requests
 from deprecation import deprecated
-from packaging.version import parse as parse_version
 
 from .cleaning import (
     clean_name,
@@ -26,7 +25,7 @@ from .cleaning import (
     gather_set_info,
     gather_specifications,
 )
-from .core import _package_data, get_config
+from .core import PANDAS_V3, _package_data, get_config
 from .heuristics import PLZ_to_LatLon_map, scale_to_net_capacities
 from .utils import (
     config_filter,
@@ -96,9 +95,9 @@ def BEYONDCOAL(raw=False, update=False, config=None):
     }
 
     no_downcast_ctx = (
-        pd.option_context("future.no_silent_downcasting", True)
-        if parse_version(pd.__version__).major < 3
-        else contextlib.nullcontext()
+        contextlib.nullcontext()
+        if PANDAS_V3
+        else pd.option_context("future.no_silent_downcasting", True)
     )
     with no_downcast_ctx:
         phaseout_col = "Covered by country phase-out? [if yes: country phase-out year]"
