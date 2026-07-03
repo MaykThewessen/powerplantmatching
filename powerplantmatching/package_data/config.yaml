@@ -254,8 +254,8 @@ OSM:
   reliability_score: 3
   net_capacity: true
   fn: osm_global.csv.gz
-  # pinned to osm-powerplants main HEAD 262b9a55 (2026-04-29); bump for newer OSM data
-  url: https://raw.githubusercontent.com/open-energy-transition/osm-powerplants/262b9a550e86/osm_global.csv.gz
+  # pinned to osm-powerplants dataset build fdc85238 (2026-07-01); bump for newer OSM data
+  url: https://raw.githubusercontent.com/open-energy-transition/osm-powerplants/fdc852389a7c/osm_global.csv.gz
 
 # ---------------------------------------------------------------------------- #
 #                             Data Structure Config                            #
