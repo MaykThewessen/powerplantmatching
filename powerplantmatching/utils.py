@@ -80,13 +80,17 @@ def get_raw_file(name, update=False, config=None, skip_retrieve=False):
         config = get_config()
     df_config = config[name]
     fn = df_config["fn"]
+    patterns = df_config.get("local_patterns", [fn])
 
     # A glob pattern in `fn` selects the most recent matching local file
-    # (e.g. a locally built, dated dump). ISO-dated filenames sort
-    # chronologically, so the last match is the newest. Falls back to
+    # (e.g. a locally built, dated dump). Sort the ISO date suffix so
+    # archive families share chronological order. Falls back to
     # downloading the URL's basename when nothing local matches.
     if any(c in fn for c in "*?["):
-        matches = sorted(glob(_data_in(fn)))
+        matches = sorted(
+            {path for pattern in patterns for path in glob(_data_in(pattern))},
+            key=lambda path: os.path.basename(path)[-14:-4],
+        )
         if matches:
             # The newest local dated build is authoritative. The URL is a
             # frozen seed (e.g. the last Zenodo dump) that can never be newer

@@ -232,6 +232,7 @@ MASTR:
   status: ["In Betrieb", "In Planung", "Endgültig stillgelegt", "Vorübergehend stillgelegt"]
   capacity_threshold: 0.05  # all values below will be filtered out, given in MW
   fn: dataversion-*.zip
+  local_patterns: [dataversion-*.zip, bnetza_open_mastr_*.zip]
   url: https://tubcloud.tu-berlin.de/s/KJWoc8rwezoRkcQ/download/dataversion-2026-08-16.zip
 EESI:
   net_capacity: true
