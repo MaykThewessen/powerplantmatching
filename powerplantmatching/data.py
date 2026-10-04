@@ -2334,18 +2334,40 @@ def MASTR(
     Provided by the German Federal Network Agency (Bundesnetzagentur / BNetzA) and
     contains data on Germany, Austria and Switzerland.
 
-    To retrieve an up-to-date version, run:
+    Install the loader-compatible exporter with
+    ``pixi add --pypi 'open-mastr>=0.17.1,<1'``, then run:
 
     ```python
-    # uv add open-mastr
     from open_mastr import Mastr
+
     db = Mastr()
     db.download()
     db.to_csv()
     ```
 
-    This will store the data in `~/.open-MaStR/data/dataversion-YYYY-MM-DD`.
-    Link to a zipped version of this folder in `config.yaml`.
+    This stores the data in ``~/.open-MaStR/data/dataversion-YYYY-MM-DD``.
+    Choose the exported folder and archive destination, then zip it with
+    Python's standard library:
+
+    ```python
+    from pathlib import Path
+    from shutil import make_archive
+
+    export_dir = Path("path/to/dataversion-YYYY-MM-DD")
+    destination = Path("path/to/powerplantmatching/data/in") / export_dir.name
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    archive = make_archive(
+        str(destination), "zip", root_dir=export_dir.parent, base_dir=export_dir.name
+    )
+    ```
+
+    Point ``MASTR.url`` in ``config.yaml`` to the archive when importing from
+    another location. The default ``MASTR.fn`` selects dated ``dataversion-*.zip``
+    archives already in the input directory.
+
+    open-mastr 1.x changed the export schema and no longer joins technology
+    tables into the ``*_raw.csv`` layout required by this loader. See
+    https://open-mastr.readthedocs.io/en/latest/getting_started/.
 
     Parameters
     ----------

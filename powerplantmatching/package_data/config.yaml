@@ -31,7 +31,6 @@ matching_sources:
   - GEM: Capacity >= 3 and not (Country == 'Germany' and Fueltype  == 'Wind')
   # do not match units below 1 MW (2 MW for biogas, 3 MW for solar), exclude wind in Germany from any matching
   - MASTR: (Fueltype != 'Wind') and ((Fueltype == 'Solar' and Capacity >= 3) or (Fueltype == 'Biogas' and Capacity >= 2) or (Fueltype not in ['Solar', 'Biogas'] and Capacity >= 1))
-  - OSM: Capacity >= 1
   - EESI
   - GHR
   # OSM (open-energy-transition/osm-powerplants); exclude German wind (MASTR-owned)
@@ -232,7 +231,6 @@ MASTR:
   status: ["In Betrieb", "In Planung", "Endgültig stillgelegt", "Vorübergehend stillgelegt"]
   capacity_threshold: 0.05  # all values below will be filtered out, given in MW
   fn: dataversion-*.zip
-  local_patterns: [dataversion-*.zip, bnetza_open_mastr_*.zip]
   url: https://tubcloud.tu-berlin.de/s/KJWoc8rwezoRkcQ/download/dataversion-2026-08-16.zip
 EESI:
   net_capacity: true

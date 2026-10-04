@@ -117,4 +117,3 @@ powerplants_custom.csv
 # stet eval runtime output
 .stet/
 powerplants.backup-*.csv
-powerplants_custom.csv
