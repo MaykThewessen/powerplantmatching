@@ -8,6 +8,11 @@ SPDX-License-Identifier: MIT
 
 ## Upcoming Version
 
+* Replace Java DUKE with a blocked Python matcher using rapidfuzz. Java, the bundled jars, XML matching files and `powerplantmatching.duke` are removed. Matching results change.
+* Score plant names symmetrically and select fuzzy links with sparse maximum-score one-to-one assignment. Exact EIC matching still runs first and accepts only isolated one-to-one pairs.
+* Preserve EICs as sorted unique lists throughout unit aggregation, reduction and cached reload. Missing EICs are `[]`.
+* Rename `parallel_duke_processes` to `parallel_processes`. Update custom configuration keys; no compatibility alias is provided.
+
 * OSM dataset upgraded from a Europe-only snapshot (`osm_europe.csv`) to a global snapshot (`osm_global.csv.gz` taken from [`osm-powerplants`](https://github.com/open-energy-transition/osm-powerplants).
 * Drop support for Python 3.10, add support for Python 3.14. Minimum required Python version is now 3.11.
 * Bugfix isinstance check in `powerplantmatching.utils.read_csv_if_string()` to correctly handle string input for data source.
