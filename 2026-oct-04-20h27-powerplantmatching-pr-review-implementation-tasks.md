@@ -10,7 +10,7 @@ Sources: [#306](https://github.com/PyPSA/powerplantmatching/pull/306), [#301](ht
 - [x] Repair the JRC loader and source configuration. Preserve plant capacity once per production unit, normalize fuel types and retain plant/generation identifier provenance. Verify against the actual archive and offline fixtures.
 - [x] Add explicit EIC coordinate enrichment with source provenance. Keep historical JRC capacity out of default unmatched-plant inclusion until status handling and coverage are validated.
 - [x] Validate the combined pipeline and document capacity, identity and geographic changes. Run focused offline tests before a cached full build. Keep benchmark agreement separate from independently verified plant identity.
-- [ ] Prepare separate upstream changes for identifier preservation, matcher integration and JRC enrichment. Update existing user-owned PRs when ready; publication requires the user's instruction.
+- [x] Prepare separate upstream changes for identifier preservation, matcher integration and JRC enrichment. Publication was authorized on 2026-10-05.
 
 ## Review evidence
 
@@ -51,4 +51,7 @@ Sources: [#306](https://github.com/PyPSA/powerplantmatching/pull/306), [#301](ht
 - Capacity quality remains incomplete: 45 records have unknown capacity (35 legacy JRC, 9 EESI and 1 GEM). The previous published snapshot has 35. Unknown values remain visible and validation reports `unknown_capacity`.
 - The previous snapshot contains 185296 records. Source vintages differ, so changes in rows and capacities cannot be attributed solely to the matcher. Configured inventories include planned and retired assets; totals are not an operational-year capacity estimate.
 - The reproducible runner is `analysis/validate-eic-coordinate-enrichment.py`. Validation artifacts are stored locally in `outputs/2026-oct-04-eic-jrc-validation/`.
-- Separate local commits are prepared. The branch contains earlier local history, so extracting changes onto current upstream remains required before publication. No remote PR has been updated.
+- Published on 2026-10-05 after extraction onto upstream `c897656`: [EIC PR #289](https://github.com/PyPSA/powerplantmatching/pull/289), [Python matcher draft #323](https://github.com/PyPSA/powerplantmatching/pull/323), and [JRC enrichment draft #324](https://github.com/PyPSA/powerplantmatching/pull/324). The follow-ups include their prerequisite changes for review.
+- The extracted EIC branch passes 14 focused tests; the extracted integration passes 64. Pre-commit checks pass on all three PRs. Other GitHub checks were queued at publication, so complete CI success is not yet verified.
+- Personal task lists, local inventory artifacts and local Pixi configuration are excluded from the upstream contributions. Local validation artifacts remain on the integration branch.
+- Next task: inspect and measure UK REPD coverage and overlap for issue #257. Keep source inclusion opt-in until the assessment is complete.
