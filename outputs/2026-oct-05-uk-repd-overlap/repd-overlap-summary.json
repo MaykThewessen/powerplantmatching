@@ -1,0 +1,84 @@
+{
+  "repd_snapshot": "July 2026 Q2",
+  "inventory_snapshot_path": "/private/tmp/ppm-pr-review/full-build/validated-powerplant-inventory.parquet",
+  "inventory_uk_rows": 2976,
+  "operational_mapped_repd": 3095,
+  "excluded_operational_technologies": {
+    "Advanced Conversion Technologies": 20,
+    "Tidal Stream": 5,
+    "Hydrogen": 3,
+    "Biomass (co-firing)": 2,
+    "Shoreline Wave": 2,
+    "Geothermal": 2,
+    "Liquid Air Energy Storage": 1,
+    "Flywheels": 1,
+    "Compressed Air Energy Storage": 1
+  },
+  "unknown_capacity_mapped": 48,
+  "threshold": 0.85,
+  "all_candidate_pairs": 4760,
+  "repd_with_any_candidate": 2281,
+  "one_to_one_selected_pairs": 2178,
+  "by_technology": {
+    "Anaerobic Digestion": {
+      "operational_repd": 151,
+      "selected_candidates": 1
+    },
+    "Battery": {
+      "operational_repd": 178,
+      "selected_candidates": 103
+    },
+    "Biomass (dedicated)": {
+      "operational_repd": 81,
+      "selected_candidates": 24
+    },
+    "EfW Incineration": {
+      "operational_repd": 61,
+      "selected_candidates": 42
+    },
+    "Landfill Gas": {
+      "operational_repd": 270,
+      "selected_candidates": 4
+    },
+    "Large Hydro": {
+      "operational_repd": 25,
+      "selected_candidates": 15
+    },
+    "Pumped Storage Hydroelectricity": {
+      "operational_repd": 4,
+      "selected_candidates": 4
+    },
+    "Sewage Sludge Digestion": {
+      "operational_repd": 12,
+      "selected_candidates": 0
+    },
+    "Small Hydro": {
+      "operational_repd": 72,
+      "selected_candidates": 25
+    },
+    "Solar Photovoltaics": {
+      "operational_repd": 1407,
+      "selected_candidates": 1213
+    },
+    "Wind Offshore": {
+      "operational_repd": 49,
+      "selected_candidates": 39
+    },
+    "Wind Onshore": {
+      "operational_repd": 785,
+      "selected_candidates": 708
+    }
+  },
+  "selected_candidate_source_memberships": {
+    "GEM": 1943,
+    "GPD": 1596,
+    "OSM": 742,
+    "ENTSOE": 99,
+    "EESI": 96,
+    "OPSD": 57,
+    "GHR": 32,
+    "JRC": 20,
+    "GEO": 2,
+    "BEYONDCOAL": 1
+  }
+}
