@@ -83,8 +83,8 @@ def test_links_near_duplicates_and_reports_scores(left, right):
         ),
         pytest.param(
             {"Name": "Delta Works", "Capacity": 5000.0},
-            True,
-            id="capacity-differs-50x-at-identical-position",
+            False,
+            id="different-name-and-50x-capacity-at-identical-position",
         ),
         pytest.param(
             {"Name": "Alpha Works", "lat": 51.0 + 10 * KM_IN_DEGREES},
@@ -324,3 +324,27 @@ def test_empty_input_returns_empty_links(left):
 
     assert out.empty
     assert list(out.columns) == ["one", "two", "scores"]
+
+
+@pytest.mark.parametrize(
+    "first, second",
+    [("Maasvlakte Maasvlakte2", "Maasvlakte Rotterdam"), ("Eemshaven", "Eemshaven Eemsmond")],
+)
+def test_name_score_is_symmetric(first, second):
+    """Swapping sources or dedup row order must not change a pair's score."""
+    a, b = frame([record(Name=first)]), frame([record(Name=second)])
+
+    forward = lk._name_matrix(a, b, "Name", 1)[0][0, 0]
+    reverse = lk._name_matrix(b, a, "Name", 1)[0][0, 0]
+
+    assert forward == pytest.approx(reverse)
+
+
+def test_linkage_and_dedup_do_not_depend_on_source_order():
+    a = record(Name="Maasvlakte Maasvlakte2")
+    b = record(Name="Maasvlakte Rotterdam", Capacity=50.0, lat=51.0 + 0.03)
+
+    assert len(lk.match([frame([a]), frame([b])])) == len(
+        lk.match([frame([b]), frame([a])])
+    )
+    assert len(lk.match(frame([a, b]))) == len(lk.match(frame([b, a])))

@@ -77,7 +77,7 @@ def _token_codes(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray
 def _name_matrix(
     left: pd.DataFrame, right: pd.DataFrame, column: str, threads: int
 ) -> Comparison:
-    """Mean best-token Jaro-Winkler similarity over the longer token list.
+    """Symmetric mean best-token Jaro-Winkler similarity over the longer token list.
 
     Character-level ratios cannot resolve unit designators -- ``token_set_ratio``
     scores "Doel 1" against "Doel 4" at 0.83 and "Neurath" against "Neurath F" at
@@ -92,15 +92,29 @@ def _name_matrix(
         vocabulary_a, vocabulary_b, scorer=JaroWinkler.similarity, workers=threads
     )
     tokens[-1, :] = tokens[:, -1] = 0.0
-    best = np.zeros((len(vocabulary_a), len(bv)))
-    for j in range(codes_b.shape[1]):
-        np.maximum(best, tokens[:, codes_b[:, j]], out=best)
-    total = np.zeros((len(av), len(bv)))
-    for k in range(codes_a.shape[1]):
-        total += np.where(counts_a[:, None] > k, best[codes_a[:, k]], 0.0)
+    forward = _token_totals(tokens, codes_a, counts_a, codes_b)
+    reverse = _token_totals(tokens.T, codes_b, counts_b, codes_a).T
+    # The lower directional total keeps score(a, b) == score(b, a).
+    total = np.minimum(forward, reverse)
     width = np.maximum(counts_a[:, None], counts_b[None, :])
     sim = np.divide(total, width, out=np.zeros_like(total), where=width > 0)
     return sim, present_a[:, None] & present_b[None, :]
+
+
+def _token_totals(
+    similarities: np.ndarray,
+    left_codes: np.ndarray,
+    left_counts: np.ndarray,
+    right_codes: np.ndarray,
+) -> np.ndarray:
+    """Sum, per left record, each token's best match among the right tokens."""
+    best = np.zeros((similarities.shape[0], len(right_codes)))
+    for j in range(right_codes.shape[1]):
+        np.maximum(best, similarities[:, right_codes[:, j]], out=best)
+    total = np.zeros((len(left_codes), len(right_codes)))
+    for k in range(left_codes.shape[1]):
+        total += np.where(left_counts[:, None] > k, best[left_codes[:, k]], 0.0)
+    return total
 
 
 def _numeric_matrix(
