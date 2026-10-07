@@ -28,7 +28,7 @@ overpass.kumi.systems: it served ~7-months-stale data on 2026-07-02 (missing our
 June 12 edits); overpass-api.de and overpass.private.coffee were timing out.
 
 Why this batch matters downstream: osm-powerplants silently drops way-plants without
-`start_date` (see `2026-jul-02-22h14-upstream-osm-powerplants-issue-drafts.md`), so
+`start_date` (see `2026_jul_02_22h14_upstream_osm_powerplants_issue_drafts.md`), so
 the `start_date` fills below are what get Wijster, Twence, Rozenburg, Dordrecht and
 Westpoort into `osm_global.csv.gz` at all. Capacity corrections fix ~340 MW of
 overstatement (243→123 Moerdijk, 185→36 EEW, 92→54 Wijster).
