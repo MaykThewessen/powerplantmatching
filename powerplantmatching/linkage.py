@@ -128,7 +128,8 @@ def _numeric_matrix(
     lo, hi = np.minimum(av, bv), np.maximum(av, bv)
     with np.errstate(invalid="ignore", divide="ignore"):
         sim = np.where(hi > 0, lo / hi, 1.0)
-    return sim, ~np.isnan(av) & ~np.isnan(bv)
+    # Infinite or negative values are data errors: treat them as missing.
+    return sim, np.isfinite(av) & np.isfinite(bv) & (av >= 0) & (bv >= 0)
 
 
 def _geo_matrix(
@@ -145,7 +146,7 @@ def _geo_matrix(
         + np.cos(la1) * np.cos(la2) * np.sin((lo2 - lo1) / 2) ** 2
     )
     dist = 2 * r * np.arcsin(np.sqrt(np.clip(h, 0, 1)))
-    return np.clip(1 - dist / GEO_MAX_DISTANCE_M, 0.0, None), ~np.isnan(dist)
+    return np.clip(1 - dist / GEO_MAX_DISTANCE_M, 0.0, None), np.isfinite(dist)
 
 
 @dataclass(frozen=True)

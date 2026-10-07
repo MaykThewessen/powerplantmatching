@@ -377,3 +377,18 @@ def test_one_to_one_keeps_every_compatible_link_in_both_source_orders(
     out = compare_two_datasets(dfs, labels, country_wise=False)
 
     assert set(zip(out["A"], out["B"])) == {("a1", "b1"), ("a2", "b2")}
+
+
+@pytest.mark.parametrize(
+    "capacity", [(-500.0, 100.0), (-5.0, -5.0), (np.inf, np.inf), (100.0, np.inf)]
+)
+def test_invalid_capacity_is_neutral_like_missing(capacity):
+    """Negative or infinite capacity must score like NaN, never as agreement."""
+    pair = [frame([record(Capacity=c)]) for c in capacity]
+    missing = [frame([record(Capacity=np.nan)]) for _ in capacity]
+
+    with np.errstate(all="ignore"):
+        scores = scores_of(*pair)["scores"].to_numpy()
+    reference = scores_of(*missing)["scores"].to_numpy()
+
+    np.testing.assert_allclose(scores, reference)
