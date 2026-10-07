@@ -12,7 +12,7 @@ SPDX-License-Identifier: MIT
 * Score plant names symmetrically and select fuzzy links with sparse maximum-score one-to-one assignment. Exact EIC matching still runs first and accepts only isolated one-to-one pairs.
 * Preserve EICs as sorted unique lists throughout unit aggregation, reduction and cached reload. Missing EICs are `[]`.
 * Rename `parallel_duke_processes` to `parallel_processes`. Update custom configuration keys; no compatibility alias is provided.
-* Enrich missing ENTSOE locations from JRC-PPDB-OPEN through unambiguous production or generation EICs. Set `ENTSOE.coordinate_source` to `null` to disable enrichment. Historical JRC capacities are not included in the default plant inventory.
+* Add opt-in enrichment of missing ENTSOE locations from JRC-PPDB-OPEN through unambiguous production or generation EICs. Set `ENTSOE.coordinate_source: JRC_PPDB_OPEN` to enable it. It is off by default: about 9% of JRC coordinates lie more than 20 km from the plant, which turns correct matches into rejected ones (about 9 GW, see PR #306). Historical JRC capacities are not included in the default plant inventory.
 * Add list-valued `GeopositionSource` to retain coordinate source, reference version and identifier level through aggregation, source selection and cached reload. Incomplete coordinate pairs are not combined across sources.
 * Add optional `JRC_PPDB_OPEN` importer with normalized fuel types, both EIC levels and production capacity preserved once per plant. Conflicting capacities are reported; ambiguous locations remain missing.
 * Rebuild cached datasets with `powerplants(update=True)` after these matching and schema changes. Scores inherited from PR #301 need fresh dataset validation under the symmetric comparison and assignment rules.

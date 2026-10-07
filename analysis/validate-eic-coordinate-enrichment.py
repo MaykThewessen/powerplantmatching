@@ -109,7 +109,7 @@ def main() -> None:
         elapsed_seconds=round(time.monotonic() - started, 2),
         matching_sources=sources,
         fully_included_sources=config["fully_included_sources"],
-        coordinate_enrichment=config["ENTSOE"]["coordinate_source"],
+        coordinate_enrichment=config["ENTSOE"].get("coordinate_source"),
         general_geocoding_enabled=False,
         reused_cached_inventory=cached.exists() and not args.rebuild,
         inventory_scope="Configured source statuses include planned and retired assets; no operational-year filter",

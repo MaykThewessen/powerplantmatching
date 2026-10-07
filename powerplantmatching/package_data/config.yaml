@@ -91,7 +91,6 @@ CARMA:
   fn: Full_CARMA_2009_Dataset_1.csv
 ENTSOE:
   reliability_score: 5
-  coordinate_source: JRC_PPDB_OPEN
   url: https://tubcloud.tu-berlin.de/s/MfA7aHLKDZzNkeW/download/entsoe_transparency_platform_20260816-1122.csv
   fn: entsoe_transparency_platform_20260816-1122.csv
 ENTSOE-EIC:
@@ -107,7 +106,7 @@ JRC_PPDB_OPEN:
   version: "1.00"
   fn: JRC-PPDB-OPEN.ver1.0.zip
   url: https://zenodo.org/records/3574566/files/JRC-PPDB-OPEN.ver1.0.zip
-  # Historical reference: coordinate enrichment only by default, not plant inclusion.
+  # Historical reference, not included as a plant source. Set ENTSOE.coordinate_source: JRC_PPDB_OPEN to fill missing ENTSOE coordinates.
 GEO:
   net_capacity: false
   reliability_score: 2
