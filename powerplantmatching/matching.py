@@ -14,7 +14,7 @@ import pandas as pd
 
 from .cleaning import clean_technology
 from .core import get_config, get_obj_if_Acc
-from .linkage import match
+from .linkage import match, select_one_to_one
 from .utils import get_name, parmap, read_csv_if_string
 
 logger = logging.getLogger(__name__)
@@ -22,21 +22,14 @@ logger = logging.getLogger(__name__)
 
 def best_matches(links):
     """
-    Subsequent to match() with singlematch=True. Returns reduced list of
-    matches on the base of the highest score for each duplicated entry.
+    Reduce accepted links to a maximum-score one-to-one assignment.
 
     Parameters
     ----------
     links : pd.DataFrame
         Links as returned by match
     """
-    labels = links.columns.difference({"scores"})
-    if links.empty:
-        return pd.DataFrame(columns=labels)
-    else:
-        scores = links["scores"].astype(float)
-        best_idx = scores.groupby(links.iloc[:, 1], sort=False).idxmax()
-        return links.loc[best_idx, labels].reset_index(drop=True)
+    return select_one_to_one(links).drop(columns="scores").reset_index(drop=True)
 
 
 def compare_two_datasets(dfs, labels, country_wise=True, config=None, **kwargs):

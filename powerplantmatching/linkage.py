@@ -25,9 +25,12 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import process
 from rapidfuzz.distance import JaroWinkler
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import min_weight_full_bipartite_matching
 
 GEO_MAX_DISTANCE_M = 5000.0
 BLOCK_CELLS = 2_000_000
+UNMATCHED_COST = 2.0
 
 Comparison = tuple[np.ndarray, np.ndarray]
 Comparator = Callable[[pd.DataFrame, pd.DataFrame, str, int], Comparison]
@@ -204,6 +207,44 @@ def _stack(parts: list[np.ndarray], dtype: type) -> np.ndarray:
     return np.concatenate(parts) if parts else np.empty(0, dtype=dtype)
 
 
+def select_one_to_one(links: pd.DataFrame) -> pd.DataFrame:
+    """Maximum-score one-to-one assignment over the accepted links.
+
+    Labels are sorted before assignment so neither source order nor row order
+    changes the result. One dummy column per left record lets every record stay
+    unmatched without adding absent candidate edges.
+    """
+    if links.empty:
+        return links.copy()
+    labels = sorted(links.columns.difference(["scores"]))
+    candidates = links.groupby(labels, as_index=False, sort=True)["scores"].max()
+    scores = candidates["scores"].to_numpy(dtype=float)
+    rows, left_ids = pd.factorize(candidates[labels[0]], sort=True)
+    cols, right_ids = pd.factorize(candidates[labels[1]], sort=True)
+    unmatched = np.arange(len(left_ids))
+    graph = coo_matrix(
+        (
+            np.concatenate(
+                [UNMATCHED_COST - scores, np.full(len(left_ids), UNMATCHED_COST)]
+            ),
+            (
+                np.concatenate([rows, unmatched]),
+                np.concatenate([cols, len(right_ids) + unmatched]),
+            ),
+        ),
+        shape=(len(left_ids), len(right_ids) + len(left_ids)),
+    ).tocsr()
+    chosen_rows, chosen_cols = min_weight_full_bipartite_matching(graph)
+    matched = chosen_cols < len(right_ids)
+    pairs = pd.DataFrame(
+        {
+            labels[0]: left_ids[chosen_rows[matched]],
+            labels[1]: right_ids[chosen_cols[matched]],
+        }
+    )
+    return pairs.merge(candidates, on=labels, validate="one_to_one")[links.columns]
+
+
 def _deduplicate(
     df: pd.DataFrame, labels: Sequence[str], threshold: float, threads: int
 ) -> pd.DataFrame:
@@ -230,8 +271,8 @@ def match(
 
     A single frame is deduplicated (returns reciprocal index pairs as
     ``cliques()`` requires); a list of two frames is linked and additionally
-    carries a ``scores`` column. In record linkage pass ``singlematch=True`` and
-    reduce with ``best_matches()`` afterwards. ``threshold`` overrides the tuned
+    carries a ``scores`` column. ``singlematch=True`` reduces the links to a
+    maximum-score one-to-one assignment. ``threshold`` overrides the tuned
     acceptance probability (``DEDUP_THRESHOLD`` / ``LINKAGE_THRESHOLD``);
     ``threads`` is the rapidfuzz worker count, ``-1`` meaning all cores.
     """
@@ -256,6 +297,6 @@ def match(
             "scores": _stack([s for _, _, s in blocks], float),
         }
     )
-    if singlematch and not res.empty:
-        res = res.loc[res.groupby(labels[0])["scores"].idxmax()]
+    if singlematch:
+        res = select_one_to_one(res)
     return res.reset_index(drop=True)

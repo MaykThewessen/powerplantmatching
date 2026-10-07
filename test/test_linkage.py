@@ -328,7 +328,10 @@ def test_empty_input_returns_empty_links(left):
 
 @pytest.mark.parametrize(
     "first, second",
-    [("Maasvlakte Maasvlakte2", "Maasvlakte Rotterdam"), ("Eemshaven", "Eemshaven Eemsmond")],
+    [
+        ("Maasvlakte Maasvlakte2", "Maasvlakte Rotterdam"),
+        ("Eemshaven", "Eemshaven Eemsmond"),
+    ],
 )
 def test_name_score_is_symmetric(first, second):
     """Swapping sources or dedup row order must not change a pair's score."""
@@ -348,3 +351,29 @@ def test_linkage_and_dedup_do_not_depend_on_source_order():
         lk.match([frame([b]), frame([a])])
     )
     assert len(lk.match(frame([a, b]))) == len(lk.match(frame([b, a])))
+
+
+ACCEPTED = [("a1", "b1", 0.95), ("a2", "b1", 0.93), ("a2", "b2", 0.90)]
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_one_to_one_keeps_every_compatible_link_in_both_source_orders(
+    monkeypatch, reverse
+):
+    """a2-b2 is accepted and b2 has no other claimant, so it must survive."""
+    from powerplantmatching.matching import compare_two_datasets
+
+    a = frame([record(), record()], index=["a1", "a2"])
+    b = frame([record(), record()], index=["b1", "b2"])
+    edges = [(r, l, s) for l, r, s in ACCEPTED] if reverse else ACCEPTED
+    dfs, labels = ([b, a], ["B", "A"]) if reverse else ([a, b], ["A", "B"])
+
+    def accepted(left, right, *args, **kwargs):
+        li = [left.index.get_loc(l) for l, _, _ in edges]
+        ri = [right.index.get_loc(r) for _, r, _ in edges]
+        return [(np.array(li), np.array(ri), np.array([s for *_, s in edges]))]
+
+    monkeypatch.setattr(lk, "_accepted_pairs", accepted)
+    out = compare_two_datasets(dfs, labels, country_wise=False)
+
+    assert set(zip(out["A"], out["B"])) == {("a1", "b1"), ("a2", "b2")}
